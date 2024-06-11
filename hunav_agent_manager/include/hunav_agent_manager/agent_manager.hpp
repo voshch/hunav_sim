@@ -38,17 +38,33 @@
 // Social Force Model
 #include <lightsfm/sfm.hpp>
 
-namespace hunav {
+namespace hunav
+{
 
-struct agent {
+struct agentBehavior
+{
+  int type = 1;
+  int state = 0;
+  int configuration = 0;  // def, manual, random
+  double duration = 40.0;
+  bool once = true;
+  double vel = 0.0;
+  double dist = 0.0;
+  double forceFactor = 0.0;
+};
+
+struct agent
+{
   std::string name;
   int type;
-  int behavior;
-  int behavior_state;
+  // int behavior;
+  // int behavior_state;
+  agentBehavior behavior;
   sfm::Agent sfmAgent;
 };
 
-class AgentManager {
+class AgentManager
+{
 public:
   /**
    * @brief Construct a new Agent Manager object
@@ -71,8 +87,7 @@ public:
    *
    * @param msg
    */
-  void updateAllAgents(const hunav_msgs::msg::Agent::SharedPtr robot_msg,
-                       const hunav_msgs::msg::Agents::SharedPtr msg);
+  void updateAllAgents(const hunav_msgs::msg::Agent::SharedPtr robot_msg, const hunav_msgs::msg::Agents::SharedPtr msg);
   /**
    * @brief method to update the agents
    *
@@ -140,7 +155,10 @@ public:
    * @param id integer id of the agent
    * @return sfm::Forces of the agent
    */
-  sfm::Forces getAgentForces(int id) { return agents_[id].sfmAgent.forces; };
+  sfm::Forces getAgentForces(int id)
+  {
+    return agents_[id].sfmAgent.forces;
+  };
 
   /**
    * @brief computed the squared distance between the robot and the agent
@@ -183,8 +201,9 @@ public:
    *
    * @param id identifier of the agent
    * @param dt time to compute the agent's movement
+   * @param closest_dist minimum distance between the robot and the agent
    */
-  void approximateRobot(int id, double dt);
+  void approximateRobot(int id, double dt, double closest_dist = 1.5, double max_vel = 1.8);
 
   /**
    * @brief the agent will try to keep more distance from the robot
@@ -192,7 +211,7 @@ public:
    * @param id identifier of the agent
    * @param dt time to compute the agent's movement
    */
-  void avoidRobot(int id, double dt);
+  void avoidRobot(int id, double dt, double scary_factor_force = 20.0, double max_vel = 0.6);
 
   /**
    * @brief the agent will try to block the path of the robot
@@ -200,7 +219,7 @@ public:
    * @param id identifier of the agent
    * @param dt time to compute the agent's movement
    */
-  void blockRobot(int id, double dt);
+  void blockRobot(int id, double dt, double front_dist = 1.4);
 
   bool goalReached(int id);
   bool updateGoal(int id);
@@ -209,7 +228,8 @@ public:
   int step_count2;
   bool move;
 
-  inline double normalizeAngle(double a) {
+  inline double normalizeAngle(double a)
+  {
     double value = a;
     while (value <= -M_PI)
       value += 2 * M_PI;
@@ -218,19 +238,20 @@ public:
     return value;
   }
 
-  inline utils::Vector2d computeDesiredForce(sfm::Agent &agent) const {
+  inline utils::Vector2d computeDesiredForce(sfm::Agent& agent) const
+  {
     utils::Vector2d desiredDirection;
-    if (!agent.goals.empty() &&
-        (agent.goals.front().center - agent.position).norm() >
-            agent.goals.front().radius) {
+    if (!agent.goals.empty() && (agent.goals.front().center - agent.position).norm() > agent.goals.front().radius)
+    {
       utils::Vector2d diff = agent.goals.front().center - agent.position;
       desiredDirection = diff.normalized();
-      agent.forces.desiredForce =
-          agent.params.forceFactorDesired *
-          (desiredDirection * agent.desiredVelocity - agent.velocity) /
-          agent.params.relaxationTime;
+      agent.forces.desiredForce = agent.params.forceFactorDesired *
+                                  (desiredDirection * agent.desiredVelocity - agent.velocity) /
+                                  agent.params.relaxationTime;
       agent.antimove = false;
-    } else {
+    }
+    else
+    {
       agent.forces.desiredForce = -agent.velocity / agent.params.relaxationTime;
       agent.antimove = true;
     }
@@ -270,5 +291,5 @@ protected:
   // agents_srv_;
 };
 
-} // namespace hunav
-#endif // HUNAV_BEHAVIORS__AGENT_MANAGER_HPP_
+}  // namespace hunav
+#endif  // HUNAV_BEHAVIORS__AGENT_MANAGER_HPP_
