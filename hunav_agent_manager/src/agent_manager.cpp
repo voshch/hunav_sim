@@ -592,23 +592,32 @@ void AgentManager::computeForces(int id)
   std::vector<sfm::Agent> otherAgents = getSFMAgents();
 
   utils::Vector2d ob;
-  switch (agents_[id].behavior.type)
+  if (agents_[id].behavior.state == 1)
   {
-    case hunav_msgs::msg::AgentBehavior::BEH_REGULAR:
-      // We add the robot as another human agent.
-      otherAgents.push_back(robot_.sfmAgent);
-      sfm::SFM.computeForces(agents_[id].sfmAgent, otherAgents);
-      break;
-    case hunav_msgs::msg::AgentBehavior::BEH_IMPASSIVE:
-      // the human treats the robot like an obstacle.
-      // We add the robot to the obstacles of this agent.
-      ob.set(robot_.sfmAgent.position.getX(), robot_.sfmAgent.position.getY());
-      agents_[id].sfmAgent.obstacles1.push_back(ob);
-      sfm::SFM.computeForces(agents_[id].sfmAgent, otherAgents);
-      break;
-    default:
-      // Compute forces as usual (not taking into account the robot)
-      sfm::SFM.computeForces(agents_[id].sfmAgent, otherAgents);
+    switch (agents_[id].behavior.type)
+    {
+      case hunav_msgs::msg::AgentBehavior::BEH_REGULAR:
+        // We add the robot as another human agent.
+        otherAgents.push_back(robot_.sfmAgent);
+        sfm::SFM.computeForces(agents_[id].sfmAgent, otherAgents);
+        break;
+      case hunav_msgs::msg::AgentBehavior::BEH_IMPASSIVE:
+        // the human treats the robot like an obstacle.
+        // We add the robot to the obstacles of this agent.
+        ob.set(robot_.sfmAgent.position.getX(), robot_.sfmAgent.position.getY());
+        agents_[id].sfmAgent.obstacles1.push_back(ob);
+        sfm::SFM.computeForces(agents_[id].sfmAgent, otherAgents);
+        break;
+      default:
+        // Compute forces as usual (not taking into account the robot)
+        sfm::SFM.computeForces(agents_[id].sfmAgent, otherAgents);
+    }
+    agents_[id].behavior.state = 0;
+  }
+  else
+  {
+    otherAgents.push_back(robot_.sfmAgent);
+    sfm::SFM.computeForces(agents_[id].sfmAgent, otherAgents);
   }
 
   bool compute = false;

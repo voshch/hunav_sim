@@ -87,11 +87,11 @@ HunavLoader::HunavLoader() : Node("hunav_loader")
       this->set_parameter(rclcpp::Parameter(name + ".behavior.obstacle_force_factor", facObstacle));
     }
 
-    // ForceFactorSocial    [2, 20] - def: 2.1
+    // ForceFactorSocial    [2.1, 20] - def: 2.1
     double facSocial = this->declare_parameter<double>(name + ".behavior.social_force_factor", 5.0);  // 2.1
-    if (facSocial < 2.0)
+    if (facSocial < 2.1)
     {
-      facSocial = 2.0;
+      facSocial = 2.1;
       this->set_parameter(rclcpp::Parameter(name + ".behavior.social_force_factor", facSocial));
     }
     else if (facSocial > 20.0)
@@ -176,10 +176,10 @@ HunavLoader::HunavLoader() : Node("hunav_loader")
       facObstacle = dis_off(gen);
       facObstacle = (facObstacle < 0.5) ? 0.5 : facObstacle;
       this->set_parameter(rclcpp::Parameter(name + ".behavior.obstacle_force_factor", facObstacle));  // def: 10.0
-      // std::uniform_real_distribution<> dis_sff(2.0, 15.0);
+      // std::uniform_real_distribution<> dis_sff(2.1, 15.0);
       std::normal_distribution<> dis_sff{ 4.0, 3.5 };
       facSocial = dis_sff(gen);
-      facSocial = (facSocial < 0.5) ? 0.5 : facSocial;
+      facSocial = (facSocial < 2.0) ? 2.0 : facSocial;
       this->set_parameter(rclcpp::Parameter(name + ".behavior.social_force_factor", facSocial));  // def: 2.1
                                                                                                   // hunav: 5.0
       // this->set_parameter(rclcpp::Parameter(name + ".behavior.once", true));
@@ -242,7 +242,7 @@ HunavLoader::HunavLoader() : Node("hunav_loader")
       std::uniform_real_distribution<> dis_off(8.0, 15.0);
       facObstacle = dis_off(gen);
       this->set_parameter(rclcpp::Parameter(name + ".behavior.obstacle_force_factor", facObstacle));  // def: 10.0
-      std::uniform_real_distribution<> dis_sff(2.0, 15.0);
+      std::uniform_real_distribution<> dis_sff(2.1, 15.0);
       facSocial = dis_sff(gen);
       this->set_parameter(rclcpp::Parameter(name + ".behavior.social_force_factor", facSocial));  // def: 2.1
                                                                                                   // hunav: 5.0
