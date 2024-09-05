@@ -165,7 +165,7 @@ void ActorPanel::addAgent()
   dur->setVisible(false);
   topic_layout->addWidget(dur);
   beh_duration = new QLineEdit();
-  beh_duration->setText(QString::number(40.0));
+  beh_duration->setText(QString::number(40.0, 'f', 1));
   beh_duration->setEnabled(false);
   beh_duration->setVisible(false);
   topic_layout->addWidget(beh_duration);
@@ -197,28 +197,28 @@ void ActorPanel::addAgent()
   // gff->setVisible(false);
   topic_layout->addWidget(gff);
   beh_gff = new QLineEdit();
-  beh_gff->setText(QString::number(2.0));
+  beh_gff->setText(QString::number(2.0, 'f', 1));
   beh_gff->setEnabled(false);
   topic_layout->addWidget(beh_gff);
   off = new QLabel("Beh Obstacle Force Factor:");
   // off->setVisible(false);
   topic_layout->addWidget(off);
   beh_off = new QLineEdit();
-  beh_off->setText(QString::number(10.0));
+  beh_off->setText(QString::number(10.0, 'f', 1));
   beh_off->setEnabled(false);
   topic_layout->addWidget(beh_off);
   sff = new QLabel("Beh Social Force Factor:");
   // sff->setVisible(false);
   topic_layout->addWidget(sff);
   beh_sff = new QLineEdit();
-  beh_sff->setText(QString::number(5.0));
+  beh_sff->setText(QString::number(5.0, 'f', 1));
   beh_sff->setEnabled(false);
   topic_layout->addWidget(beh_sff);
   other = new QLabel("Beh Robot Repulsive Force Factor:");
   other->setVisible(false);
   topic_layout->addWidget(other);
   beh_otherff = new QLineEdit();
-  beh_otherff->setText(QString::number(20.0));
+  beh_otherff->setText(QString::number(20.0, 'f', 1));
   beh_otherff->setEnabled(false);
   beh_otherff->setVisible(false);
   topic_layout->addWidget(beh_otherff);
@@ -302,6 +302,9 @@ void ActorPanel::setInitialPose()
 void ActorPanel::onInitialPose(double x, double y, double theta, QString frame)
 {
   visualization_msgs::msg::Marker marker;
+
+  // Force the locale to use '.' as the decimal separator
+  std::locale::global(std::locale("C"));
 
   // Need this variable in order to remove initial pose markers when initial pose button is clicked again.
   initial_pose_set = true;
