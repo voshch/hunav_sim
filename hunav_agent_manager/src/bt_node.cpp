@@ -434,7 +434,8 @@ void BTnode::publish_agents_tf(rclcpp::Time t, const hunav_msgs::msg::Agent::Sha
   tr.transform.translation.z = robot->position.position.z;
   tr.transform.rotation = robot->position.orientation;
   // Send the transformation
-  tf_broadcaster_->sendTransform(tr);
+  if(robot->name.length())
+    tf_broadcaster_->sendTransform(tr);
 
   for (const auto& a : msg->agents)
   {
@@ -447,7 +448,8 @@ void BTnode::publish_agents_tf(rclcpp::Time t, const hunav_msgs::msg::Agent::Sha
     tr2.transform.translation.z = a.position.position.z;
     tr2.transform.rotation = a.position.orientation;
     // Send the transformation
-    tf_broadcaster_->sendTransform(tr2);
+    if(a.name.length())
+      tf_broadcaster_->sendTransform(tr2);
   }
 }
 
