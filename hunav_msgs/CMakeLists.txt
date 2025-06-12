@@ -45,6 +45,7 @@ set(srv_files
   "srv/GetAgents.srv"
   "srv/ResetAgents.srv"
   "srv/GetWalls.srv"
+  "srv/DeleteActors.srv"
 )
 
 
