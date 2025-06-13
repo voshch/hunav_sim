@@ -17,6 +17,7 @@ AgentManager::~AgentManager()
 {
 }
 
+
 void AgentManager::init()
 {
   agents_initialized_ = false;
@@ -28,9 +29,15 @@ void AgentManager::init()
   step_count = 1;
   step_count2 = 1;
   move = false;
+  
+  // CLEAR ALL AGENTS
+  agents_.clear();
+  
+  printf("[AgentManager.init] All agents cleared and flags reset \n");
   // max_dist_view_squared_ = max_dist_view_ * max_dist_view_;
   //printf("[AgentManager.init] initialized \n");
 }
+
 
 float AgentManager::robotSquaredDistance(int id)
 {

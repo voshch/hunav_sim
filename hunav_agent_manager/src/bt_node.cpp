@@ -326,12 +326,16 @@ void BTnode::computeAgentsService(const std::shared_ptr<hunav_msgs::srv::Compute
 void BTnode::resetAgentsService(const std::shared_ptr<hunav_msgs::srv::ResetAgents::Request> request,
                                 std::shared_ptr<hunav_msgs::srv::ResetAgents::Response> response)
 {
-  auto ro = std::make_shared<hunav_msgs::msg::Agent>(request->robot);
-  auto ag = std::make_shared<hunav_msgs::msg::Agents>(request->current_agents);
-
-  // Update the internal agent states with the
-  // received data from the simulator
-  btfunc_.updateAllAgents(ro, ag);
+  RCLCPP_INFO(this->get_logger(), "=== RESET AGENTS SERVICE CALLED ===");
+  
+  // RESET ALL INTERNAL STATES
+  initialized_ = false;
+  trees_.clear();  // Clear all behavior trees
+  
+  // RESET THE AGENT MANAGER
+  btfunc_.init();  // This should reset agents_initialized_ = false
+  
+  RCLCPP_INFO(this->get_logger(), "HuNav system reset completed - ready for new agents");
   response->ok = true;
 }
 
