@@ -43,9 +43,15 @@ public:
   ~BTfunctions();
 
   void init();
-
+  void resetAgents();
+  
   void updateAllAgents(const hunav_msgs::msg::Agent::SharedPtr robot,
-                       const hunav_msgs::msg::Agents::SharedPtr msg) {
+                      const hunav_msgs::msg::Agents::SharedPtr msg) {
+    // printf("=== BTFUNC RECEIVED ===\n");
+    // for (const auto& agent : msg->agents) {  // ← KORREKT: `msg->agents`
+    //     printf("BTFUNC: Agent %s, desired_velocity=%.2f\n", 
+    //           agent.name.c_str(), agent.desired_velocity);
+    // }
     agent_manager_.updateAllAgents(robot, msg);
   }
 

@@ -322,7 +322,7 @@ bool AgentManager::updateGoal(int id)
 {
   std::lock_guard<std::mutex> guard(mutex_);
 
-  // printf("Updating goal for agent %i\n\n", id);
+  printf("Updating goal for agent %i\n\n", id);
   sfm::Goal g = agents_[id].sfmAgent.goals.front();
   agents_[id].sfmAgent.goals.pop_front();
   if (agents_[id].sfmAgent.cyclicGoals)
@@ -337,6 +337,7 @@ void AgentManager::initializeAgents(const hunav_msgs::msg::Agents::SharedPtr msg
   printf("Initializing SFM Agents...\n");
   for (auto a : msg->agents)
   {
+    // printf("Agent %s: desired_velocity from message = %.2f\n", a.name.c_str(), a.desired_velocity);
     agent ag;
     ag.name = a.name;
     ag.type = a.type;
@@ -354,6 +355,7 @@ void AgentManager::initializeAgents(const hunav_msgs::msg::Agents::SharedPtr msg
     ag.sfmAgent.id = a.id;
     ag.sfmAgent.groupId = a.group_id;
     ag.sfmAgent.desiredVelocity = a.desired_velocity;
+
     ag.sfmAgent.radius = a.radius;
     ag.sfmAgent.cyclicGoals = a.cyclic_goals;
     ag.sfmAgent.position.set(a.position.position.x, a.position.position.y);
@@ -683,33 +685,32 @@ void AgentManager::computeForces()
   std::unordered_map<int, agent>::iterator itr;
   for (itr = agents_.begin(); itr != agents_.end(); itr++)
   {
-    // printf("[AgentManager.ComputeForces] Agent %s, x:%.2f, y:%.2f
-    // dvel:%.2f\n",
-    //        itr->second.name.c_str(), itr->second.sfmAgent.position.getX(),
-    //        itr->second.sfmAgent.position.getY(),
-    //        itr->second.sfmAgent.desiredVelocity);
+    // std::cout << "[AgentManager.ComputeForces] Agent " << itr->second.name 
+    //           << ", x:" << itr->second.sfmAgent.position.getX()
+    //           << ", y:" << itr->second.sfmAgent.position.getY()
+    //           << ", dvel:" << itr->second.sfmAgent.desiredVelocity << std::endl;
 
     computeForces(itr->second.sfmAgent.id);
 
-    // printf("[AgentManager.ComputeForces] \tForces. global:%.4f, goal:%.4f "
-    //        "soc:%.4f, "
-    //        "obs:%.4f \n",
-    //        itr->second.sfmAgent.forces.globalForce.norm(),
-    //        itr->second.sfmAgent.forces.desiredForce.norm(),
-    //        itr->second.sfmAgent.forces.socialForce.norm(),
-    //        itr->second.sfmAgent.forces.obstacleForce.norm());
+    // std::cout << "[AgentManager.ComputeForces] \tForces. global:" 
+    //           << itr->second.sfmAgent.forces.globalForce.norm()
+    //           << ", goal:" << itr->second.sfmAgent.forces.desiredForce.norm()
+    //           << ", soc:" << itr->second.sfmAgent.forces.socialForce.norm()
+    //           << ", obs:" << itr->second.sfmAgent.forces.obstacleForce.norm() << std::endl;
   }
-}
+  std::cout.flush();
+  }
 
 void AgentManager::updateAllAgents(const hunav_msgs::msg::Agent::SharedPtr robot_msg,
                                    const hunav_msgs::msg::Agents::SharedPtr agents_msg)
 {
   std::lock_guard<std::mutex> guard(mutex_);
 
-  // printf("[AgentManager.updateAllAgents] Receiving agents from
-  // simulator...\n"); for (auto &a : agents_msg->agents) {
-  //   printf("[AgentManager.updateAllAgents]\tagent %s\n", a.name.c_str());
+  // std::cout << "[AgentManager.updateAllAgents] Receiving agents from simulator..." << std::endl;
+  // for (auto &a : agents_msg->agents) {
+  //   std::cout << "[AgentManager.updateAllAgents]\tagent " << a.name << std::endl;
   // }
+  // std::cout.flush();
 
   header_ = agents_msg->header;
 
