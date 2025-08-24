@@ -229,7 +229,7 @@ BT::NodeStatus BTfunctions::threateningNav(BT::TreeNode& self)
 
 void BTfunctions::resetAgents()
 {
-    printf("[BTfunctions.resetAgents] Destroying and recreating AgentManager...\n");
+    // printf("[BTfunctions.resetAgents] Destroying and recreating AgentManager...\n");
     
     // // Destruktor aufrufen (falls nötig cleanup)
     // agent_manager_.~AgentManager();
@@ -238,7 +238,7 @@ void BTfunctions::resetAgents()
     // new (&agent_manager_) AgentManager();
     agent_manager_.init();
     
-    printf("[BTfunctions.resetAgents] AgentManager recreated successfully\n");
+    // printf("[BTfunctions.resetAgents] AgentManager recreated successfully\n");
 }
 
 }  // namespace hunav
