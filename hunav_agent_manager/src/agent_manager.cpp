@@ -33,7 +33,7 @@ void AgentManager::init()
   // CLEAR ALL AGENTS
   agents_.clear();
   
-  printf("[AgentManager.init] All agents cleared and flags reset \n");
+  // printf("[AgentManager.init] All agents cleared and flags reset \n");
   // max_dist_view_squared_ = max_dist_view_ * max_dist_view_;
   //printf("[AgentManager.init] initialized \n");
 }
@@ -322,7 +322,7 @@ bool AgentManager::updateGoal(int id)
 {
   std::lock_guard<std::mutex> guard(mutex_);
 
-  printf("Updating goal for agent %i\n\n", id);
+  // printf("Updating goal for agent %i\n\n", id);
   sfm::Goal g = agents_[id].sfmAgent.goals.front();
   agents_[id].sfmAgent.goals.pop_front();
   if (agents_[id].sfmAgent.cyclicGoals)
@@ -334,7 +334,7 @@ bool AgentManager::updateGoal(int id)
 
 void AgentManager::initializeAgents(const hunav_msgs::msg::Agents::SharedPtr msg)
 {
-  printf("Initializing SFM Agents...\n");
+  // printf("Initializing SFM Agents...\n");
   for (auto a : msg->agents)
   {
     // printf("Agent %s: desired_velocity from message = %.2f\n", a.name.c_str(), a.desired_velocity);
@@ -387,12 +387,12 @@ void AgentManager::initializeAgents(const hunav_msgs::msg::Agents::SharedPtr msg
     ag.sfmAgent.params.forceFactorObstacle = a.behavior.obstacle_force_factor;
 
     agents_[ag.sfmAgent.id] = ag;
-    printf("\tagent %s, x:%.2f, y:%.2f, th:%.2f\n", agents_[ag.sfmAgent.id].name.c_str(),
-           agents_[ag.sfmAgent.id].sfmAgent.position.getX(), agents_[ag.sfmAgent.id].sfmAgent.position.getY(),
-           agents_[ag.sfmAgent.id].sfmAgent.yaw.toRadian());
+    // printf("\tagent %s, x:%.2f, y:%.2f, th:%.2f\n", agents_[ag.sfmAgent.id].name.c_str(),
+    //        agents_[ag.sfmAgent.id].sfmAgent.position.getX(), agents_[ag.sfmAgent.id].sfmAgent.position.getY(),
+    //        agents_[ag.sfmAgent.id].sfmAgent.yaw.toRadian());
   }
   agents_initialized_ = true;
-  printf("SFM Agents initialized\n");
+  // printf("SFM Agents initialized\n");
 }
 
 void AgentManager::initializeRobot(const hunav_msgs::msg::Agent::SharedPtr msg)
@@ -412,11 +412,11 @@ void AgentManager::initializeRobot(const hunav_msgs::msg::Agent::SharedPtr msg)
       sqrt(msg->velocity.linear.x * msg->velocity.linear.x + msg->velocity.linear.y * msg->velocity.linear.y);
   robot_.sfmAgent.angularVelocity = msg->velocity.angular.z;
 
-  printf("\trobot %i, x:%.2f, y:%.2f\n", robot_.sfmAgent.id, robot_.sfmAgent.position.getX(),
-         robot_.sfmAgent.position.getY());
+  // printf("\trobot %i, x:%.2f, y:%.2f\n", robot_.sfmAgent.id, robot_.sfmAgent.position.getX(),
+  //        robot_.sfmAgent.position.getY());
 
   robot_initialized_ = true;
-  printf("SFM Robot initialized\n");
+  // printf("SFM Robot initialized\n");
 }
 
 bool AgentManager::updateAgents(const hunav_msgs::msg::Agents::SharedPtr msg)

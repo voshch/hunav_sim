@@ -228,7 +228,7 @@ void BTnode::initializeBehaviorTrees(const hunav_msgs::msg::Agents& _agents)
 {
   // root_ = std::make_unique<BT::ParallelNode>("root", 1, 1);
   // root_ = std::make_unique<BT::SequenceNode>("root");
-  RCLCPP_ERROR(this->get_logger(), "Initializing Behavior Trees of %lu agents...", _agents.agents.size());
+  RCLCPP_DEBUG(this->get_logger(), "Initializing Behavior Trees of %lu agents...", _agents.agents.size());
 
   for (auto a : _agents.agents)
   {
@@ -241,7 +241,7 @@ void BTnode::initializeBehaviorTrees(const hunav_msgs::msg::Agents& _agents)
   // BT::FileLogger logger_file(tree, (filename + ".fbl").c_str());
   // // This logger stores the execution time of each node
   // BT::MinitraceLogger logger_minitrace(tree, (filename + ".json").c_str());
-  RCLCPP_ERROR(this->get_logger(), "Behavior trees succesfully initiated!");
+  RCLCPP_INFO(this->get_logger(), "Behavior trees succesfully initiated!");
 }
 
 BT::NodeStatus BTnode::tree_tick(double dt)
@@ -284,9 +284,9 @@ void BTnode::computeAgentsService(const std::shared_ptr<hunav_msgs::srv::Compute
   auto ro = std::make_shared<hunav_msgs::msg::Agent>(request->robot);
   auto ag = std::make_shared<hunav_msgs::msg::Agents>(request->current_agents);
   
-  // RCLCPP_ERROR(this->get_logger(), "=== BTNODE RECEIVED ===");
+  // RCLCPP_DEBUG(this->get_logger(), "=== BTNODE RECEIVED ===");
   // for (const auto& agent : ag->agents) {
-  //     RCLCPP_ERROR(this->get_logger(), "BTNODE: Agent %s, desired_velocity=%.2f", 
+  //     RCLCPP_DEBUG(this->get_logger(), "BTNODE: Agent %s, desired_velocity=%.2f", 
   //                   agent.name.c_str(), agent.desired_velocity);
   // }
   // Update the internal agent states with the
@@ -295,17 +295,17 @@ void BTnode::computeAgentsService(const std::shared_ptr<hunav_msgs::srv::Compute
 
   if (!initialized_)
   {
-    RCLCPP_ERROR(this->get_logger(), "First service call received!");
-    RCLCPP_ERROR(this->get_logger(), "robot pose x:%.2f, y:%.2f, th:%.2f", ro->position.position.x,
+    RCLCPP_DEBUG(this->get_logger(), "First service call received!");
+    RCLCPP_DEBUG(this->get_logger(), "robot pose x:%.2f, y:%.2f, th:%.2f", ro->position.position.x,
                 ro->position.position.y, ro->yaw);
-    RCLCPP_ERROR(this->get_logger(), "Agents received: %li", ag->agents.size());
+    RCLCPP_DEBUG(this->get_logger(), "Agents received: %li", ag->agents.size());
 
     initializeBehaviorTrees(request->current_agents);
     response->updated_agents = btfunc_.getUpdatedAgents();
 
     // for (size_t i = 0; i < response->updated_agents.agents.size(); i++) {
     //   const auto& agent = response->updated_agents.agents[i];
-    //   RCLCPP_ERROR(this->get_logger(), "Agent %d (%s): pos=[%.3f, %.3f], vel=[%.3f, %.3f], forces=?", 
+    //   RCLCPP_DEBUG(this->get_logger(), "Agent %d (%s): pos=[%.3f, %.3f], vel=[%.3f, %.3f], forces=?", 
     //               agent.id, agent.name.c_str(),
     //               agent.position.position.x, agent.position.position.y,
     //               agent.velocity.linear.x, agent.velocity.linear.y);
@@ -342,7 +342,7 @@ void BTnode::computeAgentsService(const std::shared_ptr<hunav_msgs::srv::Compute
 void BTnode::resetAgentsService(const std::shared_ptr<hunav_msgs::srv::ResetAgents::Request> request,
                                 std::shared_ptr<hunav_msgs::srv::ResetAgents::Response> response)
 {
-  RCLCPP_ERROR(this->get_logger(), "=== RESET AGENTS SERVICE CALLED ===");
+  RCLCPP_INFO(this->get_logger(), "=== RESET AGENTS SERVICE CALLED ===");
   
   // RESET ALL INTERNAL STATES
   initialized_ = false;
@@ -351,7 +351,7 @@ void BTnode::resetAgentsService(const std::shared_ptr<hunav_msgs::srv::ResetAgen
   // RESET THE AGENT MANAGER via BTfunctions
   btfunc_.resetAgents();  // This will call AgentManager::init()
   
-  RCLCPP_ERROR(this->get_logger(), "HuNav system reset completed - ready for new agents");
+  RCLCPP_INFO(this->get_logger(), "HuNav system reset completed - ready for new agents");
   response->ok = true;
 }
 
