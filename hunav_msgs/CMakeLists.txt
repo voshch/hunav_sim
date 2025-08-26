@@ -46,6 +46,7 @@ set(srv_files
   "srv/ResetAgents.srv"
   "srv/GetWalls.srv"
   "srv/DeleteActors.srv"
+  "srv/StartEvaluation.srv"
 )
 
 
