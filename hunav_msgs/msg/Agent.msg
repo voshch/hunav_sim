@@ -17,6 +17,7 @@ float32 linear_vel
 float32 angular_vel
 
 hunav_msgs/AgentBehavior behavior
+string behavior_tree
 
 geometry_msgs/Pose[] goals
 bool cyclic_goals

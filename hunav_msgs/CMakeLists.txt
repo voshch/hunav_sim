@@ -47,6 +47,7 @@ set(srv_files
   "srv/GetWalls.srv"
   "srv/DeleteActors.srv"
   "srv/StartEvaluation.srv"
+  "srv/GetParameters.srv"
 )
 
 
