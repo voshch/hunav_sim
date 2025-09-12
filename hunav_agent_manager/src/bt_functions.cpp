@@ -334,14 +334,23 @@ BT::NodeStatus BTfunctions::setGoal(BT::TreeNode & self)
   if (!goal_id_msg)
     throw BT::RuntimeError("setGoal: missing required input [goal_id]: ", goal_id_msg.error());
 
+  auto target_x = self.getInput<double>("target_x");
+  if (!target_x)
+    throw BT::RuntimeError("setGoal: missing required input [target_x]: ", target_x.error());
+  
+  auto target_y = self.getInput<double>("target_y");
+  if (!target_y)
+    throw BT::RuntimeError("setGoal: missing required input [target_y]: ", target_y.error());
+
   int agent_id = id_msg.value();
   int goal_id = goal_id_msg.value();
 
-  auto it = global_goals_.find(goal_id);
-  if (it == global_goals_.end())
-    return BT::NodeStatus::FAILURE;
+  geometry_msgs::msg::Point pt;
+  pt.x = target_x.value();
+  pt.y = target_y.value();
+  pt.z = 0.0;
+  global_goals_[goal_id] = pt;
 
-  const auto & pt = it->second;
   sfm::Goal  goal;
   goal.center.set(pt.x, pt.y);
   goal.radius = 0.1;
