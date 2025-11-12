@@ -367,6 +367,23 @@ namespace hunav
     // received data from the simulator
     btfunc_.updateAllAgents(ro, ag);
 
+    const auto &closest = ag->agents[0].closest_obs;
+    // RCLCPP_INFO(this->get_logger(), "agent[0] closest_obs size: %ld", (long)closest.size());
+    // for (size_t i = 0; i < closest.size(); ++i)
+    // {
+    //   const auto &o = closest[i];
+    //   // adjust fields below to match the message type of closest_obs (e.g. o.x, o.y, o.z, o.id)
+    //   RCLCPP_INFO(this->get_logger(), "agent[0] closest_obs[%ld]: x=%.3f y=%.3f z=%.3f", (long)i, (double)o.x, (double)o.y, (double)(o.z));
+    // }
+
+    RCLCPP_INFO(this->get_logger(), "agents received: %li", ag->agents.size());
+    for (auto a : ag->agents)
+    {
+      sfm::Forces frs = getAgentForces(a.id);
+      RCLCPP_INFO(this->get_logger(), " Agent id: %i, forces: [%.3f, %.3f]", a.id, frs.obstacleForce.getX(), frs.obstacleForce.getY());
+      RCLCPP_INFO(this->get_logger(), " Agent id: %i, position: [%.3f, %.3f]", a.id, a.position.position.x, a.position.position.y);
+    }
+    
     if (!initialized_)
     {
       RCLCPP_INFO(this->get_logger(), "First service call received!");
@@ -387,6 +404,11 @@ namespace hunav
       publish_agents_tf(t, ro, ag);
     if (pub_forces_)
       publish_agents_forces(t, ag);
+
+    // auto frs = btfunc_.getAgentForces(ag->agents[0].id);
+
+    // RCLCPP_INFO(this->get_logger(), "Obstacle Force of agent id %i: x: %.3f, y: %.3f", response->updated_agents.agents[0].id,
+    //             frs.obstacleForce.getX(), frs.obstacleForce.getY());
     // if (pub_agent_states_)
     publish_agent_states(t, ag);
     publish_robot_state(t, ro);
@@ -594,14 +616,16 @@ namespace hunav
       publishForceMarker(a.id + 1, a.name, msg->header.frame_id, t, a.position.position, getColor(1, 0, 0, 1),
                          frs.obstacleForce,
                          markers); // RED
+      
+
       publishForceMarker(a.id + 2, a.name, msg->header.frame_id, t, a.position.position, getColor(0, 0, 1, 1),
                          frs.socialForce,
                          markers); // BLUE
       // publishForceMarker(2, getColor(0, 1, 1, 1), robot_.forces.groupForce,
       //                   markers);
-      publishForceMarker(a.id + 3, a.name, msg->header.frame_id, t, a.position.position, getColor(0, 1, 0, 1),
-                         frs.desiredForce,
-                         markers); // GREEN
+      // publishForceMarker(a.id + 3, a.name, msg->header.frame_id, t, a.position.position, getColor(0, 1, 0, 1),
+      //                    frs.desiredForce,
+      //                    markers); // GREEN
       publishForceMarker(a.id + 4, a.name, msg->header.frame_id, t, a.position.position, getColor(1, 1, 1, 1),
                          frs.globalForce,
                          markers); // WHITE
