@@ -36,7 +36,7 @@ namespace hunav
       // Set default values
       pub_people_ = true;
       map_name_ = "warehouse";
-      simulator_name_ = "Gazebo Classic";
+      simulator_name_ = "Isaac Sim";
       yaml_base_name_ = "warehouse_agents";
     }
 
@@ -48,6 +48,17 @@ namespace hunav
                 pub_people_ ? "true" : "false");
 
     // 4) Hand global goals to BT logic:
+    RCLCPP_WARN(get_logger(), "Setting global goals...");
+    // Declare 1k dummy global goals for agents to set them later
+    global_goals_.clear();
+    for (int i = 0; i < 1000; i++)
+    {
+      geometry_msgs::msg::Point dummy_point;
+      dummy_point.x = 15.0;
+      dummy_point.y = 10.0;
+      dummy_point.z = 0.0;
+      global_goals_[i] = dummy_point;
+    }
     btfunc_.setGlobalGoals(global_goals_);
 
     // Set the base directory for behavior trees
@@ -418,7 +429,7 @@ namespace hunav
   }
 
   void BTnode::clearAgentsService(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
-                                   std::shared_ptr<std_srvs::srv::Trigger::Response> response)
+                                  std::shared_ptr<std_srvs::srv::Trigger::Response> response)
   {
     btfunc_.clear();
     response->success = true;
