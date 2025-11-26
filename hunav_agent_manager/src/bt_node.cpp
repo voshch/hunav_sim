@@ -275,10 +275,10 @@ namespace hunav
           _agent.id, e.what(), fullpath.c_str());
     }
 
-    if (!publisher_)
-    {
-      publisher_ = std::make_unique<BT::Groot2Publisher>(trees_[_agent.id], 5555);
-    }
+    // if (!publisher_)
+    // {
+    //   publisher_ = std::make_unique<BT::Groot2Publisher>(trees_[_agent.id], 5555);
+    // }
 
     RCLCPP_INFO(this->get_logger(), "Behavior Tree for agent %s [id:%i] loaded!", _agent.name.c_str(),
                 _agent.id);
