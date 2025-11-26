@@ -275,7 +275,7 @@ namespace hunav
           _agent.id, e.what(), fullpath.c_str());
     }
 
-    if (_agent.id == 1)
+    if (!publisher_)
     {
       publisher_ = std::make_unique<BT::Groot2Publisher>(trees_[_agent.id], 5555);
     }
@@ -421,6 +421,7 @@ namespace hunav
                                    std::shared_ptr<std_srvs::srv::Trigger::Response> response)
   {
     btfunc_.clear();
+    initialized_ = false;
     response->success = true;
   }
 
