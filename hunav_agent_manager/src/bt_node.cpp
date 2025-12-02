@@ -49,17 +49,7 @@ namespace hunav
 
     // 4) Hand global goals to BT logic:
     RCLCPP_WARN(get_logger(), "Setting global goals...");
-    // Declare 1k dummy global goals for agents to set them later
-    global_goals_.clear();
-    for (int i = 0; i < 1000; i++)
-    {
-      geometry_msgs::msg::Point dummy_point;
-      dummy_point.x = 15.0;
-      dummy_point.y = 10.0;
-      dummy_point.z = 0.0;
-      global_goals_[i] = dummy_point;
-    }
-    btfunc_.setGlobalGoals(global_goals_);
+
 
     // Set the base directory for behavior trees
     {
@@ -106,7 +96,6 @@ namespace hunav
     agent_srv_ = this->create_service<hunav_msgs::srv::ComputeAgent>("compute_agent", std::bind(&BTnode::computeAgentService, this, _1, _2));
     move_agent_srv_ = this->create_service<hunav_msgs::srv::MoveAgent>("move_agent", std::bind(&BTnode::moveAgentService, this, _1, _2));
     reset_srv_ = this->create_service<hunav_msgs::srv::ResetAgents>("reset_agents", std::bind(&BTnode::resetAgentsService, this, _1, _2));
-    clear_srv_ = this->create_service<std_srvs::srv::Trigger>("clear_agents", std::bind(&BTnode::clearAgentsService, this, _1, _2));
 
     if (pub_forces_)
     {
@@ -428,13 +417,6 @@ namespace hunav
     response->ok = true;
   }
 
-  void BTnode::clearAgentsService(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
-                                  std::shared_ptr<std_srvs::srv::Trigger::Response> response)
-  {
-    btfunc_.clear();
-    initialized_ = false;
-    response->success = true;
-  }
 
   void BTnode::moveAgentService(const std::shared_ptr<hunav_msgs::srv::MoveAgent::Request> request,
                                 std::shared_ptr<hunav_msgs::srv::MoveAgent::Response> response)
