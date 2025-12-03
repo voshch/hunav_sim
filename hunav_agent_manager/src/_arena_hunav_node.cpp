@@ -17,6 +17,7 @@ namespace hunav
     bt_dir_base_ = ament_index_cpp::get_package_share_directory("arena_simulation_setup") + "/configs/hunav/behavior_trees";
 
     // Declare 1k dummy global goals for agents to set them later
+    RCLCPP_INFO(get_logger(), "Setting global goals...");
     global_goals_.clear();
     for (int i = 0; i < 1000; i++)
     {

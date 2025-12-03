@@ -29,63 +29,62 @@ namespace hunav
     // 2) Create service client to get parameters from hunav_loader
     get_parameters_client_ = this->create_client<hunav_msgs::srv::GetParameters>("/get_parameters");
 
-    // 3) Get parameters from hunav_loader node
-    if (!getParametersFromLoader())
-    {
-      RCLCPP_ERROR(get_logger(), "Failed to get parameters from hunav_loader. Using defaults.");
-      // Set default values
-      pub_people_ = true;
-      map_name_ = "warehouse";
-      simulator_name_ = "Isaac Sim";
-      yaml_base_name_ = "warehouse_agents";
-    }
+    // // 3) Get parameters from hunav_loader node
+    // if (!getParametersFromLoader())
+    // {
+    //   RCLCPP_ERROR(get_logger(), "Failed to get parameters from hunav_loader. Using defaults.");
+    //   // Set default values
+    //   pub_people_ = true;
+    //   map_name_ = "warehouse";
+    //   simulator_name_ = "Isaac Sim";
+    //   yaml_base_name_ = "warehouse_agents";
+    // }
 
-    RCLCPP_INFO(get_logger(),
-                "Parameters from loader: map=%s, simulator=%s, yaml_base_name=%s, publish_people=%s",
-                map_name_.c_str(),
-                simulator_name_.c_str(),
-                yaml_base_name_.c_str(),
-                pub_people_ ? "true" : "false");
+    // RCLCPP_INFO(get_logger(),
+    //             "Parameters from loader: map=%s, simulator=%s, yaml_base_name=%s, publish_people=%s",
+    //             map_name_.c_str(),
+    //             simulator_name_.c_str(),
+    //             yaml_base_name_.c_str(),
+    //             pub_people_ ? "true" : "false");
 
     // 4) Hand global goals to BT logic:
-    RCLCPP_WARN(get_logger(), "Setting global goals...");
 
 
-    // Set the base directory for behavior trees
-    {
-      std::string package_name;
+    // // Set the base directory for behavior trees
+    // {
+    //   std::string package_name;
 
-      if (simulator_name_ == "Gazebo Classic")
-      {
-        package_name = "hunav_gazebo_wrapper";
-      }
-      else if (simulator_name_ == "Gazebo Fortress")
-      {
-        package_name = "hunav_gazebo_fortress_wrapper";
-      }
-      else if (simulator_name_ == "Isaac Sim")
-      {
-        package_name = "hunav_isaac_wrapper";
-      }
-      else
-      { // Webots
-        package_name = "hunav_webots_wrapper";
-      }
+    //   if (simulator_name_ == "Gazebo Classic")
+    //   {
+    //     package_name = "hunav_gazebo_wrapper";
+    //   }
+    //   else if (simulator_name_ == "Gazebo Fortress")
+    //   {
+    //     package_name = "hunav_gazebo_fortress_wrapper";
+    //   }
+    //   else if (simulator_name_ == "Isaac Sim")
+    //   {
+    //     package_name = "hunav_isaac_wrapper";
+    //   }
+    //   else
+    //   { // Webots
+    //     package_name = "hunav_webots_wrapper";
+    //   }
 
-      try
-      {
-        bt_dir_base_ = ament_index_cpp::get_package_share_directory(package_name) + "/behavior_trees";
-        RCLCPP_INFO(this->get_logger(),
-                    "Found ROS2 package '%s', behavior trees will be loaded from: %s",
-                    package_name.c_str(), bt_dir_base_.c_str());
-      }
-      catch (const ament_index_cpp::PackageNotFoundError &e)
-      {
-        RCLCPP_WARN(this->get_logger(),
-                    "ROS2 package '%s' not found,",
-                    package_name.c_str());
-      }
-    }
+    //   try
+    //   {
+    //     bt_dir_base_ = ament_index_cpp::get_package_share_directory(package_name) + "/behavior_trees";
+    //     RCLCPP_INFO(this->get_logger(),
+    //                 "Found ROS2 package '%s', behavior trees will be loaded from: %s",
+    //                 package_name.c_str(), bt_dir_base_.c_str());
+    //   }
+    //   catch (const ament_index_cpp::PackageNotFoundError &e)
+    //   {
+    //     RCLCPP_WARN(this->get_logger(),
+    //                 "ROS2 package '%s' not found,",
+    //                 package_name.c_str());
+    //   }
+    // }
 
     prev_time_ = this->get_clock()->now();
 
@@ -250,6 +249,8 @@ namespace hunav
     blackboard->set<double>("dt", 0.0);
 
     const std::string fname = _agent.behavior_tree != "" ? _agent.behavior_tree : yaml_base_name_ + "__agent_" + std::to_string(_agent.id) + "_bt.xml";
+    RCLCPP_ERROR(this->get_logger(), "Behavior tree file for agent %i: %s from %s", _agent.id, fname.c_str(), _agent.behavior_tree.c_str());
+
 
     std::string fullpath;
     if (fname.size() > 0 && fname[0] == '/')
