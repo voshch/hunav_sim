@@ -2,7 +2,7 @@
 
 // forward‐declare so extern compiles
 namespace hunav {
-  class BTfunctions;
+class BTfunctions;
   extern BTfunctions * g_btfunctions;
 }
 
@@ -60,17 +60,17 @@ public:
   void init();
   void clear();
   void resetAgents();
-  
+
 
   void setGlobalGoals(const std::map<int,geometry_msgs::msg::Point> &goals) {
     global_goals_ = goals;
   }
 
   void updateAllAgents(const hunav_msgs::msg::Agent::SharedPtr robot,
-                      const hunav_msgs::msg::Agents::SharedPtr msg) {
+                       const hunav_msgs::msg::Agents::SharedPtr msg) {
     // printf("=== BTFUNC RECEIVED ===\n");
     // for (const auto& agent : msg->agents) {  // ← KORREKT: `msg->agents`
-    //     printf("BTFUNC: Agent %s, desired_velocity=%.2f\n", 
+    //     printf("BTFUNC: Agent %s, desired_velocity=%.2f\n",
     //           agent.name.c_str(), agent.desired_velocity);
     // }
     agent_manager_.updateAllAgents(robot, msg);
@@ -131,6 +131,33 @@ public:
 
   std::map<int,geometry_msgs::msg::Point> global_goals_;
   geometry_msgs::msg::Point getGlobalGoal(int id) const;
+
+  /* =====================
+   * Arena world size
+   * We need to scale between velocity field size and Arena World
+   * because velocity field is just a grid map of the world
+   * ===================== */
+  std::pair<float, float> arena_world_size;
+  void setArenaWorldSize(const std::pair<float, float> &arena_world_size);
+  mutable std::mutex arena_world_size_mutex;
+
+  /* =====================
+   * Velocity field
+   * ===================== */
+  static constexpr size_t VF_H = 64;
+  static constexpr size_t VF_W = 64;
+  static constexpr size_t VF_C = 2;
+
+  // Each pedestrians group has its own velocity field
+  using GroupVelocityField =
+      std::array<std::array<std::array<float, VF_C>, VF_W>, VF_H>;
+  using VelocityField = std::vector<GroupVelocityField>;
+  VelocityField velocity_field;
+
+  void setVelocityField(const VelocityField &velocity_field);
+  std::pair<float, float> getVelocityAt(size_t velocity_field_group_id, float x,
+                                        float y) const;
+  mutable std::mutex velocity_field_mutex;
 
 private:
   AgentManager agent_manager_;
