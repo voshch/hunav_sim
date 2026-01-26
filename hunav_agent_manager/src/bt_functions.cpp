@@ -662,9 +662,16 @@ BTfunctions *g_btfunctions = nullptr;
     size_t grid_x = (size_t)(x / (arena_world_size.first / VF_H));
     size_t grid_y = (size_t)(y / (arena_world_size.second / VF_W));
     if (grid_x >= VF_H || grid_y >= VF_W) {
-      throw std::out_of_range("Velocity field index out of bound, got: (" +
+      RCLCPP_WARN(rclcpp::get_logger("BTfunctions"), "Velocity field index out of bound, got: (" +
                               std::to_string(grid_x) + ", " +
-                              std::to_string(grid_y) + ")");
+                              std::to_string(grid_y) + ")" +
+                "Returning zeros."
+      );
+
+      return{
+        0.0,
+        0.0
+      }
     }
 
     return {velocity_field[velocity_field_group_id][grid_x][grid_y][0],

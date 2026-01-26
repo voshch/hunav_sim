@@ -58,9 +58,10 @@ void FollowVelocityFieldNode::recomputeGoal() {
     auto direction = goal_pos - pos;
 
     // Ensure the distance between goal and current position is at least
-    // 2xtolerance_
+    // 2 x tolerance_
     if (direction.norm() < 2 * tolerance_) {
-      goal_pos = pos + direction * 2;
+      double direction_scale = 2 * tolerance_ / direction.norm();
+      goal_pos = pos + direction * direction_scale;
     }
   }
 
