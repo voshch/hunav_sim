@@ -54,7 +54,7 @@ void FollowVelocityFieldNode::recomputeGoal() {
 
   // Scale the goal vector to make sure if the velocity is not zero,
   // the goal isn't within tolerance_
-  if (vx * vy != 0) {
+  if (vx != 0 || vy != 0) {
     auto direction = goal_pos - pos;
 
     // Ensure the distance between goal and current position is at least

@@ -1,5 +1,5 @@
 # Request
-std_msgs/Float32MultiArray arena_world_size
+std_msgs/Float32MultiArray arena_world_bounds
 ---
 # Response
 bool success
