@@ -58,18 +58,23 @@ void FollowVelocityFieldNode::recomputeGoal() {
     auto direction = goal_pos - pos;
 
     // Ensure the distance between goal and current position is at least
-    // 2 x tolerance_
-    if (direction.norm() < 2 * tolerance_) {
-      double direction_scale = 2 * tolerance_ / direction.norm();
+    // 20 x tolerance_
+    if (direction.norm() < 20 * tolerance_) {
+      double direction_scale = 20 * tolerance_ / direction.norm();
       goal_pos = pos + direction * direction_scale;
     }
   }
 
-  // 3) Set new goal for the agent
-  sfm::Goal goal;
-  goal.center.set(goal_pos.getX(), goal_pos.getY());
-  goal.radius = 0.1;
-  agent_manager_->clearAndSetAgentGoal(agent_id_, goal);
+  // 3) Set new goal for the agent if the direction is 5 degree different from the current goal to avoid unnecessary updates
+  sfm::Goal current_goal = agent_manager_->getAgentGoals(agent_id_).front();
+
+  auto current_direction = utils::Vector2d(current_goal.center.getX(), current_goal.center.getY()) - pos;
+  if (current_direction.norm() == 0 || (goal_pos - pos).dot(current_direction) / (goal_pos - pos).norm() / current_direction.norm() < std::cos(5 * M_PI / 180)) {
+    sfm::Goal goal;
+    goal.center.set(goal_pos.getX(), goal_pos.getY());
+    goal.radius = 0.1;
+    agent_manager_->clearAndSetAgentGoal(agent_id_, goal);
+  }
 }
 
 BT::NodeStatus FollowVelocityFieldNode::onRunning() {

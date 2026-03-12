@@ -46,7 +46,7 @@ namespace hunav
       throw BT::RuntimeError("FollowAgentNode: missing input [time_step] in onRunning", dt_msg.error());
     current_dt = dt_msg.value();
 
-    agent_manager_->followAgent(agent_id_, target_agent_id_, current_dt, default_closest_dist_, default_max_vel_);
+    agent_manager_->followAgent(agent_id_, target_agent_id_, current_dt, 0.1, default_max_vel_);
 
     if (duration_ > 0.0)
     {
