@@ -4,7 +4,7 @@
 
 #include <string>
 
-#include "behaviortree_cpp_v3/condition_node.h"
+#include "behaviortree_cpp/condition_node.h"
 #include "rclcpp/rclcpp.hpp"
 
 namespace hunav {
@@ -21,7 +21,7 @@ public:
    * @param conf BT node configuration
    */
   TimeExpiredCondition(const std::string &condition_name,
-                       const BT::NodeConfiguration &conf);
+                       const BT::NodeConfig &conf);
 
   TimeExpiredCondition() = delete;
 

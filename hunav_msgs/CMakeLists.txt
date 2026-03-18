@@ -35,6 +35,7 @@ set(msg_files
   "msg/Agent.msg"
   "msg/Agents.msg"
   "msg/AgentBehavior.msg"
+  "msg/WallSegment.msg"
 )
 
 set(srv_files
@@ -43,6 +44,10 @@ set(srv_files
   "srv/MoveAgent.srv"
   "srv/GetAgents.srv"
   "srv/ResetAgents.srv"
+  "srv/GetWalls.srv"
+  "srv/DeleteActors.srv"
+  "srv/StartEvaluation.srv"
+  "srv/GetParameters.srv"
 )
 
 

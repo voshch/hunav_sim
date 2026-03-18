@@ -1,14 +1,14 @@
 #include <memory>
 #include <string>
 
-#include "behaviortree_cpp_v3/condition_node.h"
+#include "behaviortree_cpp/condition_node.h"
 
 #include "hunav_agent_manager/time_expired_condition.hpp"
 
 namespace hunav {
 
 TimeExpiredCondition::TimeExpiredCondition(const std::string &condition_name,
-                                           const BT::NodeConfiguration &conf)
+                                           const BT::NodeConfig &conf)
     : BT::ConditionNode(condition_name, conf), period_(1.0) {
   getInput("seconds", period_);
   // node_ = config().blackboard->get<rclcpp::Node::SharedPtr>("node");
