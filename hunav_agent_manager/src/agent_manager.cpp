@@ -231,6 +231,9 @@ void AgentManager::lookAtPoint(int agent_id, const utils::Vector2d & target)
     
     agents_[agent_id].behavior.state = 1;
     
+    // RCLCPP_ERROR(rclcpp::get_logger("hunav_agent_manager"), 
+    //           "lookAtPoint: Agent %i: currentYaw=%.2f, desiredAngle=%.2f, error=%.2f, newYaw=%.2f\n",
+    //         agent_id, currentYaw, desiredAngle, error, newYaw);
     // printf("lookAtPoint: Agent %i: currentYaw=%.2f, desiredAngle=%.2f, error=%.2f, newYaw=%.2f\n",
     //        agent_id, currentYaw, desiredAngle, error, newYaw);
 }
