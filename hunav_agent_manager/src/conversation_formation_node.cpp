@@ -160,7 +160,10 @@ namespace hunav
       goal.radius = 0.1; // conversational “personal space”
 
       // We use setAgentGoal (push front) so existing goals remain behind
-      agent_manager_->setAgentGoal(agent_id, goal);
+      agent_manager_->clearAndSetAgentGoal(agent_id, goal);
+      // RCLCPP_ERROR(rclcpp::get_logger("hunav_agent_manager"), 
+      //              "Agent %d assigned to spot (%f, %f). Center was (%f, %f)", 
+      //              agent_id, tx, ty, pt.x, pt.y);
 
       // std::cout << "[ConversationFormationNode] Assigned agent " << agent_id
       //           << " → circle spot (" << tx << ", " << ty << ")\n";
@@ -211,9 +214,14 @@ namespace hunav
       double dx = ax - gx;
       double dy = ay - gy;
       double dist_to_goal = std::sqrt(dx * dx + dy * dy);
-
+      // static int log_throttle = 0;
       if (dist_to_goal > current_goal.radius)
       {
+        // if (log_throttle++%20==0) {
+        //   RCLCPP_ERROR(rclcpp::get_logger("hunav_agent_manager"), 
+        //             "Agent %d moving to spot (%f, %f)", 
+        //             agent_id, gx, gy);
+        // }
         // Not yet at spot: move toward it
         agent_manager_->updatePosition(agent_id, dt_);
         readiness_[i] = false;
@@ -230,6 +238,11 @@ namespace hunav
 
       if (std::fabs(yaw_error) > yaw_tolerance)
       {
+        // if (log_throttle++%20==0) {
+        //   RCLCPP_ERROR(rclcpp::get_logger("hunav_agent_manager"), 
+        //             "Agent %d reached spot (%f, %f). Adjusting orientation", 
+        //             agent_id, gx, gy);
+        // }
         // Not yet oriented: rotate a bit
         agent_manager_->lookAtPoint(agent_id, conversation_center_);
         readiness_[i] = false;
@@ -237,6 +250,11 @@ namespace hunav
       }
       else
       {
+        // if (log_throttle++%20==0) {
+        //   RCLCPP_ERROR(rclcpp::get_logger("hunav_agent_manager"), 
+        //             "Agent %d reached spot (%f, %f), headed the correct orientation", 
+        //             agent_id, gx, gy);
+        // }
         // This agent is both “at spot” and “oriented”
         readiness_[i] = true;
       }
@@ -245,11 +263,15 @@ namespace hunav
     // 3) If all agents are “ready,” start or continue the conversation timer
     if (all_ready)
     {
+      // RCLCPP_ERROR(rclcpp::get_logger("hunav_agent_manager"), 
+      //           "All agents ready, start counting time");
       // 3a) If this is the first time all are ready, record the start time
       if (conversation_start_time_ == std::chrono::steady_clock::time_point())
       {
         conversation_start_time_ = std::chrono::steady_clock::now();
         // std::cout << "[ConversationFormationNode] All agents in place & oriented. Conversation begins.\n";
+        // RCLCPP_ERROR(rclcpp::get_logger("hunav_agent_manager"), 
+        //           "All agents ready, start counting time");
       }
 
       // 3b) Check elapsed time
@@ -266,6 +288,8 @@ namespace hunav
           const auto &goals = kv.second;
           agent_manager_->clearAndSetAgentGoals(id, goals);
         }
+        // RCLCPP_ERROR(rclcpp::get_logger("hunav_agent_manager"), 
+        //         "Conversation ended after %f seconds", elapsed);
         // std::cout << "[ConversationFormationNode] Conversation ended after "
         //           << conversation_duration_ << " seconds. Restored goals.\n";
         return BT::NodeStatus::SUCCESS;
