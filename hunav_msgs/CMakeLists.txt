@@ -48,6 +48,8 @@ set(srv_files
   "srv/DeleteActors.srv"
   "srv/StartEvaluation.srv"
   "srv/GetParameters.srv"
+  "srv/SetArenaWorldBounds.srv"
+  "srv/SetVelocityField.srv"
 )
 
 
