@@ -642,6 +642,58 @@ namespace hunav
     return BT::NodeStatus::SUCCESS;
   }
 
+  void BTfunctions::setVelocityField(const VelocityField &velocity_field)
+  {
+    std::lock_guard<std::mutex> lock(velocity_field_mutex);
+    this->velocity_field = velocity_field;
+  }
+
+  // Usage: auto [vx, vy] = getVelocityAt(velocity_field_group_id, x, y);
+  std::pair<float, float>
+  BTfunctions::getVelocityAt(size_t velocity_field_group_id, float x,
+                             float y) const
+  {
+    std::lock_guard<std::mutex> lock(velocity_field_mutex);
+    if (velocity_field_group_id >= velocity_field.size())
+    {
+      throw std::out_of_range(
+          "Invalid velocity_field_group_id. Current number of groups: " +
+          std::to_string(velocity_field.size()) +
+          ", got: " + std::to_string(velocity_field_group_id));
+    }
+
+    float x_min = arena_world_bounds[0];
+    float y_min = arena_world_bounds[1];
+    float x_max = arena_world_bounds[2];
+    float y_max = arena_world_bounds[3];
+
+    if (x < x_min || y < y_min || x >= x_max || y >= y_max)
+    {
+      RCLCPP_WARN(
+          rclcpp::get_logger("BTfunctions"),
+          "Agent is out of velocity field, got: (%.3f, %.3f). Returning zeros.",
+          x, y);
+
+      return {
+          0.0,
+          0.0};
+    }
+
+    size_t grid_x = (size_t)((x - x_min) / (x_max - x_min) * VF_W);
+    size_t grid_y = (size_t)((y - y_min) / (y_max - y_min) * VF_H);
+
+    return {velocity_field[velocity_field_group_id][grid_y][grid_x][0],
+            velocity_field[velocity_field_group_id][grid_y][grid_x][1]};
+  }
+
+  void BTfunctions::setArenaWorldBounds(
+      const std::vector<float> &arena_world_bounds)
+  {
+    std::lock_guard<std::mutex> lock(arena_world_bounds_mutex);
+
+    this->arena_world_bounds = arena_world_bounds;
+  }
+
   void BTfunctions::resetAgents()
   {
     // printf("[BTfunctions.resetAgents] Destroying and recreating AgentManager...\n");

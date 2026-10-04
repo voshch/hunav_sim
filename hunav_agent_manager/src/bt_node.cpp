@@ -217,6 +217,7 @@ namespace hunav
     factory_.registerNodeType<hunav::StopAndWaitTimerActionNode>("StopAndWaitTimerAction");
     factory_.registerNodeType<hunav::ConversationFormationNode>("ConversationFormation");
     factory_.registerNodeType<hunav::GoToNode>("GoTo");
+    factory_.registerNodeType<hunav::FollowVelocityFieldNode>("FollowVelocityField");
     factory_.registerNodeType<hunav::ApproachAgentNode>("ApproachAgent");
     factory_.registerNodeType<hunav::FollowAgentNode>("FollowAgent");
     factory_.registerNodeType<hunav::ApproachRobotNode>("ApproachRobot");
